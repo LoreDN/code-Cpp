@@ -37,9 +37,30 @@ class myException {
         myException(std::string msg);
 
         // methods prototypes
-        virtual void print_message() = 0;
+        virtual void print() = 0;
 
 };
+
+/* ------------------------------------------------------------------------------ 1. myIndex_Exception ------------------------------------------------------------------------------ */
+
+class myIndex_Exception : public myException {
+
+    protected:
+
+        // attributes
+        size_t index;
+
+    public:
+
+        // constructor
+        myIndex_Exception(size_t idx, std::string msg);
+
+        // methods prototypes
+        void print() override;
+
+};
+
+void test_index(size_t index, size_t limit);
 
 
 #endif // MYEXCEPTIONS_HPP
