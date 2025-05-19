@@ -10,7 +10,7 @@
 *
 *
 *  |-----** IMPORTANT!!! **-----|
-*   Since this library is the core of all the others, it is designed in order to be used inside the various library functions, however it is avaible for general use.
+*  Since this library is the core of all the others, it is designed in order to be used inside the various library functions, however it is avaible for general use.
 *
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -45,7 +45,7 @@ class myException {
 
 class myIndex_Exception : public myException {
 
-    protected:
+    private:
 
         // attributes
         size_t index;
@@ -61,6 +61,29 @@ class myIndex_Exception : public myException {
 };
 
 void test_index(size_t index, size_t limit);
+
+/* ------------------------------------------------------------------------------- 2. myFile_Exception ------------------------------------------------------------------------------ */
+
+class myFile_Exception : public myException {
+
+    private:
+
+        // attributes
+        std::string path;
+
+    public:
+
+        // constructor
+        myFile_Exception(std::string name, std::string message);
+
+        // methods prototypes
+        void print() override;
+
+};
+
+void test_infile(std::string path, std::ifstream *file);
+void test_outfile(std::string path, std::ofstream *file);
+void test_iofile(std::string path, std::fstream *file);
 
 
 #endif // MYEXCEPTIONS_HPP
