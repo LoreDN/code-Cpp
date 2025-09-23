@@ -9,22 +9,83 @@
 #include "myHash.hpp"
 
 
+// explicit template instantiations
+template class myHash<int>; template class myHash_Open<int>; template class myHash_Close<int>;
+template class myHash<float>; template class myHash_Open<float>; template class myHash_Close<float>;
+
+
+/* ---------------------------------------------------------------------------------- ROOT. myHash ---------------------------------------------------------------------------------- */
+
+
+// Method 1 --- Scan the Hash-Table from terminal
+template <typename TYPE>
+void myHash<TYPE>::scan(const size_t num) {
+
+    // scan the Hash-Table
+    std::cout << std::endl;
+    for (size_t i = 1; i <= num; i++) {
+
+        TYPE value;
+        std::cout << "Element " << i << ": ";
+        std::cin >> value;
+        this->add(value);
+
+    }
+    std::cout << std::endl;
+
+    // exit
+    return;
+
+}
+
+
+// Method 2 --- Scan the Hash-Table from file
+template <typename TYPE>
+void myHash<TYPE>::scan_file(const std::string path) {
+
+    // open the file
+    std::ifstream file(path);
+    try {
+
+        test_infile(path, &file);
+
+    } catch (myFile_Exception &error) {
+
+        error.print();
+
+    }
+
+    // scan the Hash-Table
+    while (!file.eof()) {
+
+        TYPE value;
+        file >> value;
+        this->add(value);
+
+    }
+
+    // close the file
+    file.close();
+
+    // exit
+    return;
+
+}
+
+
 /* ---------------------------------------------------------------------------- 1. MyHash :: myHash_Open ---------------------------------------------------------------------------- */
 
 
 // constructor
-myHash_Open::myHash_Open(size_t dim) {
+template <typename TYPE>
+myHash_Open<TYPE>::myHash_Open(const size_t dim) {
 
     // set the dimension
     this->dimension = dim;
 
-    // set the Hash Table
+    // set the Hash-Table
     this->table = new myHash_Open::myBucket*[dim];
-    for (size_t i = 0; i < dim; i++) {
-
-        this->table[i] = nullptr;
-
-    }
+    for (size_t i = 0; i < dim; i++) { this->table[i] = nullptr; }
 
     // exit
     return;
@@ -33,14 +94,12 @@ myHash_Open::myHash_Open(size_t dim) {
 
 
 // destructor
-myHash_Open::~myHash_Open() {
+template <typename TYPE>
+myHash_Open<TYPE>::~myHash_Open() {
 
-    // delete all Buckets
-    for (size_t i = 0; i < this->dimension; i++) {
-
-        this->remove_Bucket(i);
-
-    }
+    // delete the Hash-Table
+    for (size_t i = 0; i < this->dimension; i++) { this->remove_Bucket(i); }
+    delete this->table;
 
     // exit
     return;
@@ -51,16 +110,9 @@ myHash_Open::~myHash_Open() {
 /* ====================================== 1.1 Scan the Hash Table ===================================== */
 
 
-// Method 1 --- Hash Function
-inline size_t myHash_Open::hash(size_t key) {
-
-    return key % this->dimension;
-
-}
-
-
-// Method 2 --- Add a new Bucket
-myHash_Open::myBucket *myHash_Open::add_Bucket(size_t key) {
+// Method 1 --- Add a new Bucket
+template <typename TYPE>
+typename myHash_Open<TYPE>::myBucket *myHash_Open<TYPE>::add_Bucket(const TYPE key) {
 
     // allocate the new Bucket
     myHash_Open::myBucket *bucket = new myHash_Open::myBucket;
@@ -75,8 +127,9 @@ myHash_Open::myBucket *myHash_Open::add_Bucket(size_t key) {
 }
 
 
-// Method 3 --- Add an element to a Bucket
-void myHash_Open::add(size_t key) {
+// Method 2 --- Add an element to a Bucket
+template <typename TYPE>
+void myHash_Open<TYPE>::add(const TYPE key) {
 
     // find the Bucket
     size_t bucket = this->hash(key);
@@ -107,65 +160,12 @@ void myHash_Open::add(size_t key) {
 }
 
 
-// Method 4 --- Scan the Hash Table from terminal
-void myHash_Open::scan(size_t num) {
-
-    // scan the Hash Table
-    std::cout << std::endl;
-    for (size_t i = 1; i <= num; i++) {
-
-        size_t value;
-        std::cout << "Element " << i << ": ";
-        std::cin >> value;
-        this->add(value);
-
-    }
-    std::cout << std::endl;
-
-    // exit
-    return;
-
-}
-
-
-// Method 5 --- Scan the Hash Table from file
-void myHash_Open::scan_file(std::string path) {
-
-    // open the file
-    std::ifstream file(path);
-    try {
-
-        test_infile(path, &file);
-
-    } catch (myFile_Exception &error) {
-
-        error.print();
-
-    }
-
-    // scan the Hash Table
-    while (!file.eof()) {
-
-        size_t value;
-        file >> value;
-        this->add(value);
-
-    }
-
-    // close the file
-    file.close();
-
-    // exit
-    return;
-
-}
-
-
 /* ===================================== 1.2 Print the Hash Table ===================================== */
 
 
-// Method 6 --- Print the Hash Table to terminal
-void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
+// Method 3 --- Print the Hash-Table to terminal
+template <typename TYPE>
+void myHash_Open<TYPE>::print(const size_t start, const size_t end, const bool flag_user_interface) {
 
     // check the indexes
     try {
@@ -182,7 +182,7 @@ void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
     // if flag is set to 1, print the user interface
     if (flag_user_interface) {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             // print the Bucket
@@ -197,11 +197,7 @@ void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
 
                 // print the elements of the Bucket
                 size_t j = 1;
-                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                    std::cout << "Element " << j++ << ": " << temp->value << "\t";
-
-                }
+                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { std::cout << "Element " << j++ << ": " << temp->value << "\t"; }
                 std::cout << std::endl << std::endl;
 
             }
@@ -210,7 +206,7 @@ void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
 
     } else {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             if (this->table[i] == nullptr) {
@@ -221,11 +217,7 @@ void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
             } else {
 
                 // print the elements of the Bucket
-                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                    std::cout << temp->value << "\t";
-
-                }
+                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { std::cout << temp->value << "\t"; }
                 std::cout << std::endl;
 
             }
@@ -240,8 +232,9 @@ void myHash_Open::print(size_t start, size_t end, bool flag_user_interface) {
 }
 
 
-// Method 7 --- Print the Hash Table to file
-void myHash_Open::print_file(std::string path, size_t start, size_t end, bool flag_user_interface) {
+// Method 4 --- Print the Hash-Table to file
+template <typename TYPE>
+void myHash_Open<TYPE>::print_file(const std::string path, const size_t start, size_t end, const bool flag_user_interface) {
 
     // check the indexes
     try {
@@ -270,7 +263,7 @@ void myHash_Open::print_file(std::string path, size_t start, size_t end, bool fl
     // if flag is set to 1, print the user interface
     if (flag_user_interface) {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             // print the Bucket
@@ -285,11 +278,7 @@ void myHash_Open::print_file(std::string path, size_t start, size_t end, bool fl
 
                 // print the elements of the Bucket
                 size_t j = 1;
-                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                    file << "Element " << j++ << ": " << temp->value << "\t";
-
-                }
+                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { file << "Element " << j++ << ": " << temp->value << "\t"; }
                 file << std::endl << std::endl;
 
             }
@@ -298,7 +287,7 @@ void myHash_Open::print_file(std::string path, size_t start, size_t end, bool fl
 
     } else {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             if (this->table[i] == nullptr) {
@@ -334,8 +323,9 @@ void myHash_Open::print_file(std::string path, size_t start, size_t end, bool fl
 /* ============================================ 1.3 Utility =========================================== */
 
 
-// Method 8 --- Find an element in the Bucket
-myHash_Open::myBucket *myHash_Open::find(size_t key) {
+// Method 5 --- Find an element in the Bucket
+template <typename TYPE>
+typename myHash_Open<TYPE>::myBucket *myHash_Open<TYPE>::find(const TYPE key) {
 
     // get the Bucket
     size_t bucket = this->hash(key);
@@ -350,16 +340,12 @@ myHash_Open::myBucket *myHash_Open::find(size_t key) {
 }
 
 
-// Method 9 --- Remove an element from a Bucket
-void myHash_Open::remove(size_t key) {
+// Method 6 --- Remove an element from a Bucket
+template <typename TYPE>
+void myHash_Open<TYPE>::remove(const TYPE key) {
 
     // check if the element exists
-    if (this->find(key) == nullptr) {
-
-        // exit
-        return;
-
-    }
+    if (this->find(key) == nullptr) { return; }
 
     // find the Bucket
     size_t bucket = this->hash(key);
@@ -393,8 +379,9 @@ void myHash_Open::remove(size_t key) {
 }
 
 
-// Method 10 --- Remove a Bucket
-void myHash_Open::remove_Bucket(size_t bucket) {
+// Method 7 --- Remove a Bucket
+template <typename TYPE>
+void myHash_Open<TYPE>::remove_Bucket(const size_t bucket) {
 
     // check the index
     try {
@@ -423,26 +410,16 @@ void myHash_Open::remove_Bucket(size_t bucket) {
 }
 
 
-// Method 11 --- Get the load factor of the Hash Table
-inline float myHash_Open::load_factor() {
-
-    return (float)this->elements / (float)this->dimension;    
-
-}
-
-
-// Method 12 --- Copy to a destination Hash Table
-void myHash_Open::copy(myHash_Open destination) {
+// Method 8 --- Copy to a destination Hash-Table
+template <typename TYPE>
+void myHash_Open<TYPE>::copy(myHash_Open *destination) {
 
     // copy every Bucket
-    for (size_t i = 0; i < this->dimension; i++) {
+    size_t min_dimension = (this->dimension <= (*destination).dimension) ? this->dimension : (*destination).dimension;
+    for (size_t i = 0; i < min_dimension; i++) {
 
-        // resize and copy the keys to the destination
-        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-            destination.add(temp->value);
-
-        }
+        // copy the keys to the destination
+        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { (*destination).add(temp->value); }
 
     }
 
@@ -456,19 +433,16 @@ void myHash_Open::copy(myHash_Open destination) {
 
 
 // constructor
-myHash_Close::myHash_Close(size_t dim, bool flag) {
+template <typename TYPE>
+myHash_Close<TYPE>::myHash_Close(const size_t dim, const bool flag) {
 
     // set the attributes
     this->dimension = dim;
     this->flag_probing = flag;
 
-    // set the Hash Table
-    this->table = new int[dim];
-    for (size_t i = 0; i < dim; i++) {
-
-        this->table[i] = myHash_Close::EMPTY;
-
-    }
+    // set the Hash-Table
+    this->table = new TYPE[dim];
+    for (size_t i = 0; i < dim; i++) { this->table[i] = myHash_Close::EMPTY; }
 
     // exit
     return;
@@ -477,14 +451,12 @@ myHash_Close::myHash_Close(size_t dim, bool flag) {
 
 
 // destructor
-myHash_Close::~myHash_Close() {
+template <typename TYPE>
+myHash_Close<TYPE>::~myHash_Close() {
 
-    // delete all the Buckets
-    for (size_t i = 0; i < this->dimension; i++) {
-
-        this->remove_Bucket(i);
-
-    }
+    // delete the Hash-Table
+    for (size_t i = 0; i < this->dimension; i++) { this->remove_Bucket(i); }
+    delete this->table;
 
     // exit
     return;
@@ -496,27 +468,24 @@ myHash_Close::~myHash_Close() {
 
 
 // Method 1 --- Hash Function
-int myHash_Close::hash(size_t key) {
+template <typename TYPE>
+int myHash_Close<TYPE>::hash(const TYPE key) {
 
     // check if the Bucket is avaible
-    key %= this->dimension;
-    if (table[key] == myHash_Close::EMPTY || table[key] == myHash_Close::TOMBSTONE) {
-
-        // exit
-        return key;
-
-    }
+    int key_abs = abs(key);
+    size_t bucket = key_abs % this->dimension;
+    if (table[bucket] == myHash_Close::EMPTY || table[bucket] == myHash_Close::TOMBSTONE) { return bucket; }
 
     // Bucket unavaible
     if (this->flag_probing) {
 
         // quadratic probing
-        return this->quadratic_probing(key);
+        return this->quadratic_probing(key_abs);
 
     } else {
 
         // linear probing
-        return this->linear_probing(key);
+        return this->linear_probing(key_abs);
 
     }
 
@@ -524,18 +493,14 @@ int myHash_Close::hash(size_t key) {
 
 
 // Method 2 --- Linear Probing for a Bucket
-int myHash_Close::linear_probing(size_t key) {
+template <typename TYPE>
+int myHash_Close<TYPE>::linear_probing(const int key_abs) {
 
     // check a free Bucket
     for (size_t step = 1; step <= this->dimension; step++) {
 
-        size_t index = (key + step) % this->dimension;
-        if (this->table[index] == myHash_Close::EMPTY || this->table[index] == myHash_Close::TOMBSTONE) {
-
-            // Bucket found
-            return index;
-
-        }
+        size_t bucket = (key_abs + step) % this->dimension;
+        if (this->table[bucket] == myHash_Close::EMPTY || this->table[bucket] == myHash_Close::TOMBSTONE) { return bucket; }
 
     }
 
@@ -546,18 +511,14 @@ int myHash_Close::linear_probing(size_t key) {
 
 
 // Method 3 --- Quadratic Probing for a Bucket
-int myHash_Close::quadratic_probing(size_t key) {
+template <typename TYPE>
+int myHash_Close<TYPE>::quadratic_probing(const int key_abs) {
 
     // check a free Bucket
     for (size_t step = 1; step <= this->dimension; step++) {
 
-        size_t index = (key + (size_t)((0.5 * step * step) + (0.5 * step))) % this->dimension;
-        if (this->table[index] == myHash_Close::EMPTY || this->table[index] == myHash_Close::TOMBSTONE) {
-
-            // Bucket found
-            return index;
-
-        }
+        size_t bucket = (key_abs + (size_t)((0.5 * step * step) + (0.5 * step))) % this->dimension;
+        if (this->table[bucket] == myHash_Close::EMPTY || this->table[bucket] == myHash_Close::TOMBSTONE) { return bucket; }
 
     }
 
@@ -568,7 +529,8 @@ int myHash_Close::quadratic_probing(size_t key) {
 
 
 // Method 4 --- Add an element to a Bucket
-void myHash_Close::add(size_t key) {
+template <typename TYPE>
+void myHash_Close<TYPE>::add(const TYPE key) {
 
     // find the Bucket
     int bucket = this->hash(key);
@@ -576,8 +538,6 @@ void myHash_Close::add(size_t key) {
 
         //add the element to the Bucket
         this->table[bucket] = key;
-
-        // increment the elements counter
         this->elements++;
 
     }
@@ -588,65 +548,12 @@ void myHash_Close::add(size_t key) {
 }
 
 
-// Method 5 --- Scan the Hash Table from terminal
-void myHash_Close::scan(size_t num) {
-
-    // scan the Hash Table
-    std::cout << std::endl;
-    for (size_t i = 1; i <= num; i++) {
-
-        size_t value;
-        std::cout << "Element " << i << ": ";
-        std::cin >> value;
-        this->add(value);
-
-    }
-    std::cout << std::endl;
-
-    // exit
-    return;
-
-}
-
-
-// Method 6 --- Scan the Hash Table from file
-void myHash_Close::scan_file(std::string path) {
-
-    // open the file
-    std::ifstream file(path);
-    try {
-
-        test_infile(path, &file);
-
-    } catch (myFile_Exception &error) {
-
-        error.print();
-
-    }
-
-    // scan the Hash Table
-    while (!file.eof()) {
-
-        size_t value;
-        file >> value;
-        this->add(value);
-
-    }
-
-    // close the file
-    file.close();
-
-    // exit
-    return;
-
-}
-
-
 /* ===================================== 2.2 Print the Hash Table ===================================== */
 
 
-// Method 7 --- Print the Hash Table to terminal
-void myHash_Close::print(size_t start, size_t end, bool flag_user_interface) {
+// Method 5 --- Print the Hash-Table to terminal
+template <typename TYPE>
+void myHash_Close<TYPE>::print(const size_t start, const size_t end, const bool flag_user_interface) {
 
     // check the indexes
     try {
@@ -663,7 +570,7 @@ void myHash_Close::print(size_t start, size_t end, bool flag_user_interface) {
     // if flag is set to 1, print the user interface
     if (flag_user_interface) {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             // print the Bucket
@@ -685,7 +592,7 @@ void myHash_Close::print(size_t start, size_t end, bool flag_user_interface) {
 
     } else {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             if (this->table[i] == myHash_Close::EMPTY || this->table[i] == myHash_Close::TOMBSTONE) {
@@ -710,8 +617,9 @@ void myHash_Close::print(size_t start, size_t end, bool flag_user_interface) {
 }
 
 
-// Method 8 --- Print the Hash Table to file
-void myHash_Close::print_file(std::string path, size_t start, size_t end, bool flag_user_interface) {
+// Method 6 --- Print the Hash-Table to file
+template <typename TYPE>
+void myHash_Close<TYPE>::print_file(const std::string path, const size_t start, const size_t end, const bool flag_user_interface) {
 
     // check the indexes
     try {
@@ -740,7 +648,7 @@ void myHash_Close::print_file(std::string path, size_t start, size_t end, bool f
     // if flag is set to 1, print the user interface
     if (flag_user_interface) {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
             // print the Bucket
@@ -762,7 +670,7 @@ void myHash_Close::print_file(std::string path, size_t start, size_t end, bool f
 
     } else {
 
-        // print the Hash Table
+        // print the Hash-Table
         for (size_t i = start; i <= end; i++) {
 
            if (this->table[i] == myHash_Close::EMPTY || this->table[i] == myHash_Close::TOMBSTONE) {
@@ -793,11 +701,12 @@ void myHash_Close::print_file(std::string path, size_t start, size_t end, bool f
 /* ============================================ 2.3 Utility =========================================== */
 
 
-// Method 9 --- Find an element in the Bucket
-int myHash_Close::find(size_t key) {
+// Method 7 --- Find an element in the Bucket
+template <typename TYPE>
+int myHash_Close<TYPE>::find(const TYPE key) {
 
     // check the real key Bucket
-    size_t index = key % this->dimension;
+    size_t index = (size_t)key % this->dimension;
     if (this->table[index] == (int)key) {
 
         // exit
@@ -813,13 +722,8 @@ int myHash_Close::find(size_t key) {
     // linear search of the element
     for (size_t i = 1; i < this->dimension; i++) {
 
-        index = (key + i) % this->dimension;
-        if (this->table[index] == (int)key) {
-
-            // element found
-            return index;
-
-        }
+        index = ((size_t)key + i) % this->dimension;
+        if (this->table[index] == key) { return index; }
 
     }
 
@@ -829,8 +733,9 @@ int myHash_Close::find(size_t key) {
 }
 
 
-// Method 10 --- Remove a Bucket
-void myHash_Close::remove(size_t key) {
+// Method 8 --- Remove a Bucket
+template <typename TYPE>
+void myHash_Close<TYPE>::remove(const TYPE key) {
 
     // check if the element exists
     int del = this->find(key);
@@ -853,8 +758,9 @@ void myHash_Close::remove(size_t key) {
 }
 
 
-// Method 11 --- Remove a Bucket
-void myHash_Close::remove_Bucket(size_t bucket) {
+// Method 9 --- Remove a Bucket
+template <typename TYPE>
+void myHash_Close<TYPE>::remove_Bucket(const size_t bucket) {
 
     // check the index
     try {
@@ -868,17 +774,10 @@ void myHash_Close::remove_Bucket(size_t bucket) {
     }
 
     // check the Bucket
-    if (this->table[bucket] == myHash_Close::EMPTY || this->table[bucket] == myHash_Close::TOMBSTONE) {
-
-        // exit
-        return;
-
-    }
+    if (this->table[bucket] == myHash_Close::EMPTY || this->table[bucket] == myHash_Close::TOMBSTONE) { return; }
 
     // set the Bucket as TOMBSTONE
     this->table[bucket] = myHash_Close::TOMBSTONE;
-
-    // decrement the elements counter
     this->elements--;
 
     // exit
@@ -887,27 +786,16 @@ void myHash_Close::remove_Bucket(size_t bucket) {
 }
 
 
-// Method 12 --- Get the load factor of the Hash Table
-inline float myHash_Close::load_factor() {
-
-    return (float)this->elements / (float)this->dimension;    
-
-}
-
-
-// Method 13 --- Copy to a destination Hash Table
-void myHash_Close::copy(myHash_Close *destination) {
+// Method 10 --- Copy to a destination Hash-Table
+template <typename TYPE>
+void myHash_Close<TYPE>::copy(myHash_Close *destination) {
 
     // copy every Bucket
     for (size_t i = 0; i < this->dimension; i++) {
 
         // resize and copy the keys to the destination
         int value = this->table[i];
-        if (value != myHash_Close::EMPTY && value != myHash_Close::TOMBSTONE) {
-
-            (*destination).add(value);
-        
-        }
+        if (value != myHash_Close::EMPTY && value != myHash_Close::TOMBSTONE) { (*destination).add(value); }
 
     }    
 
