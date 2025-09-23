@@ -5,13 +5,13 @@
 
 /* ---------------------------------------------------------------------------- 1. MyHash :: myHash_Open ---------------------------------------------------------------------------- */
 
-
-class myHash_Open : public myHash {
+template <typename TYPE>
+class myHash_Open : public myHash<TYPE> {
 
     // Bucket definition
     typedef struct myHash_Node {
 
-        size_t value;
+        TYPE value;
         myHash_Node *next;
 
     }myBucket;
@@ -22,17 +22,13 @@ class myHash_Open : public myHash {
         myBucket **table;
 
         // Method 1 --- Hash Function
-        inline size_t hash(size_t key) {
-
-            return key % this->dimension;
-
-        }
+        inline size_t hash(const TYPE key) { return abs(key) % this->dimension; }
 
         // Method 2 --- Add a new Bucket
-        myBucket *add_Bucket(size_t key) {
+        myBucket *add_Bucket(const TYPE key) {
 
             // allocate the new Bucket
-            myBucket *bucket = new myBucket;
+            myHash_Open::myBucket *bucket = new myHash_Open::myBucket;
 
             // set the new Bucket
             bucket->value = key;
@@ -47,18 +43,14 @@ class myHash_Open : public myHash {
     public:
 
         // constructor
-        myHash_Open(size_t dim) {
+        myHash_Open(const size_t dim) {
 
             // set the dimension
             this->dimension = dim;
 
-            // set the Hash Table
-            this->table = new myBucket*[dim];
-            for (size_t i = 0; i < dim; i++) {
-
-                this->table[i] = nullptr;
-
-            }
+            // set the Hash-Table
+            this->table = new myHash_Open::myBucket*[dim];
+            for (size_t i = 0; i < dim; i++) { this->table[i] = nullptr; }
 
             // exit
             return;
@@ -68,12 +60,9 @@ class myHash_Open : public myHash {
         // destructor
         ~myHash_Open() override {
 
-            // delete all Buckets
-            for (size_t i = 0; i < this->dimension; i++) {
-
-                this->remove_Bucket(i);
-
-            }
+            // delete the Hash-Table
+            for (size_t i = 0; i < this->dimension; i++) { this->remove_Bucket(i); }
+            delete this->table;
 
             // exit
             return;
@@ -81,7 +70,7 @@ class myHash_Open : public myHash {
         }
 
         // Method 3 --- Add an element to a Bucket
-        void add(size_t key) override {
+        void add(const TYPE key) override {
 
             // find the Bucket
             size_t bucket = this->hash(key);
@@ -95,7 +84,7 @@ class myHash_Open : public myHash {
             } else {
 
                 // go to the end of the Bucket
-                myBucket *temp = this->table[bucket];
+                myHash_Open::myBucket *temp = this->table[bucket];
                 for (; temp->next != nullptr; temp = temp->next);
 
                 // allocate the new element
@@ -110,61 +99,9 @@ class myHash_Open : public myHash {
             return;
 
         }
-
-        // Method 4 --- Scan the Hash Table from terminal
-        void scan(size_t num) override {
-
-            // scan the Hash Table
-            std::cout << std::endl;
-            for (size_t i = 1; i <= num; i++) {
-
-                int value;
-                std::cout << "Element " << i << ": ";
-                std::cin >> value;
-                this->add(value);
-
-            }
-            std::cout << std::endl;
-
-            // exit
-            return;
-
-        }
-
-        // Method 5 --- Scan the Hash Table from file
-        void scan_file(std::string path) override {
-
-            // open the file
-            std::ifstream file(path);
-            try {
-
-                test_infile(path, &file);
-
-            } catch (myFile_Exception &error) {
-
-                error.print();
-
-            }
-
-            // scan the Hash Table
-            while (!file.eof()) {
-
-                size_t value;
-                file >> value;
-                this->add(value);
-
-            }
-
-            // close the file
-            file.close();
-
-            // exit
-            return;
-
-        }
         
-        // Method 6 --- Print the Hash Table to terminal
-        void print(size_t start, size_t end, bool flag_user_interface) override {
+        // Method 4 --- Print the Hash-Table to terminal
+        void print(const size_t start, const size_t end, const bool flag_user_interface) override {
 
             // check the indexes
             try {
@@ -181,7 +118,7 @@ class myHash_Open : public myHash {
             // if flag is set to 1, print the user interface
             if (flag_user_interface) {
 
-                // print the Hash Table
+                // print the Hash-Table
                 for (size_t i = start; i <= end; i++) {
 
                     // print the Bucket
@@ -196,11 +133,7 @@ class myHash_Open : public myHash {
 
                         // print the elements of the Bucket
                         size_t j = 1;
-                        for (myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                            std::cout << "Element " << j++ << ": " << temp->value << "\t";
-
-                        }
+                        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { std::cout << "Element " << j++ << ": " << temp->value << "\t"; }
                         std::cout << std::endl << std::endl;
 
                     }
@@ -209,7 +142,7 @@ class myHash_Open : public myHash {
 
             } else {
 
-                // print the Hash Table
+                // print the Hash-Table
                 for (size_t i = start; i <= end; i++) {
 
                     if (this->table[i] == nullptr) {
@@ -220,11 +153,7 @@ class myHash_Open : public myHash {
                     } else {
 
                         // print the elements of the Bucket
-                        for (myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                            std::cout << temp->value << "\t";
-
-                        }
+                        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { std::cout << temp->value << "\t"; }
                         std::cout << std::endl;
 
                     }
@@ -238,8 +167,8 @@ class myHash_Open : public myHash {
 
         }
 
-        // Method 7 --- Print the Hash Table to file
-        void print_file(std::string path, size_t start, size_t end, bool flag_user_interface) override {
+        // Method 5 --- Print the Hash-Table to file
+        void print_file(const std::string path, const size_t start, size_t end, const bool flag_user_interface) override {
 
             // check the indexes
             try {
@@ -268,7 +197,7 @@ class myHash_Open : public myHash {
             // if flag is set to 1, print the user interface
             if (flag_user_interface) {
 
-                // print the Hash Table
+                // print the Hash-Table
                 for (size_t i = start; i <= end; i++) {
 
                     // print the Bucket
@@ -283,11 +212,7 @@ class myHash_Open : public myHash {
 
                         // print the elements of the Bucket
                         size_t j = 1;
-                        for (myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
-
-                            file << "Element " << j++ << ": " << temp->value << "\t";
-
-                        }
+                        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { file << "Element " << j++ << ": " << temp->value << "\t"; }
                         file << std::endl << std::endl;
 
                     }
@@ -296,7 +221,7 @@ class myHash_Open : public myHash {
 
             } else {
 
-                // print the Hash Table
+                // print the Hash-Table
                 for (size_t i = start; i <= end; i++) {
 
                     if (this->table[i] == nullptr) {
@@ -307,7 +232,7 @@ class myHash_Open : public myHash {
                     } else {
 
                         // print the elements of the Bucket
-                        for (myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
+                        for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) {
 
                             file << temp->value << "\t";
 
@@ -328,35 +253,26 @@ class myHash_Open : public myHash {
 
         }
 
-        // Method 8 --- Find an element in the bucket
-        bool find(size_t key) override {
+        // Method 6 --- Find an element in the bucket
+        size_t find(const TYPE key) override {
 
-            // get the bucket
+            // get the Bucket
             size_t bucket = this->hash(key);
 
             // linear search of the element
-            bool find = false;
-            for (myBucket *element = this->table[bucket]; element != nullptr && find == false; element = element->next) {
-
-                find = element->value == key;
-
-            }
+            myHash_Open::myBucket *element = nullptr;
+            for (element = this->table[bucket]; element != nullptr && element->value != key; element = element->next);
 
             // exit
-            return find;
+            return element;
 
         }
 
-        // Method 9 --- Remove an element from a Bucket
-        void remove(size_t key) override {
+        // Method 7 --- Remove an element from a Bucket
+        void remove(const TYPE key) override {
 
             // check if the element exists
-            if (!this->find(key)) {
-
-                // exit
-                return;
-
-            }
+            if (this->find(key) == nullptr) { return; }
 
             // find the Bucket
             size_t bucket = this->hash(key);
@@ -364,18 +280,18 @@ class myHash_Open : public myHash {
             if (this->table[bucket]->value == key) {
 
                 // remove the Head
-                myBucket *del = this->table[bucket];
+                myHash_Open::myBucket *del = this->table[bucket];
                 this->table[bucket] = del->next;
                 delete del;
 
             } else {
 
                 // go to the previous element
-                myBucket *prev = table[bucket];
+                myHash_Open::myBucket *prev = this->table[bucket];
                 for (; prev->next != nullptr && prev->next->value != key; prev = prev->next);
 
                 // remove the element
-                myBucket *del = prev->next;
+                myHash_Open::myBucket *del = prev->next;
                 prev->next = del->next;
                 delete del;
 
@@ -389,8 +305,8 @@ class myHash_Open : public myHash {
 
         }
 
-        // Method 10 --- Remove a Bucket
-        void remove_Bucket(size_t bucket) {
+        // Method 8 --- Remove a Bucket
+        void remove_Bucket(const size_t bucket) {
 
             // check the index
             try {
@@ -403,11 +319,11 @@ class myHash_Open : public myHash {
 
             }
 
-            // remove all the elements of the bucket
-            myBucket *current = table[bucket];
+            // remove all the elements of the Bucket
+            myHash_Open::myBucket *current = this->table[bucket];
             while (current != nullptr) {
 
-                myBucket *del = current;
+                myHash_Open::myBucket *del = current;
                 current = current->next;
                 this->remove(del->value);
 
@@ -418,25 +334,15 @@ class myHash_Open : public myHash {
 
         }
 
-        // Method 11 --- Get the load factor of the Hash Table
-        inline float load_factor() override {
-
-            return (float)this->elements / (float)this->dimension;    
-
-        }
-
-        // Method 12 --- Copy to a destination Hash Table
-        void copy(myHash_Open destination) {
+        // Method 9 --- Copy to a destination Hash Table
+        void copy(myHash_Open *destination) {
 
             // copy every Bucket
-            for (size_t i = 0; i < this->dimension; i++) {
+            size_t min_dimension = (this->dimension <= (*destination).dimension) ? this->dimension : (*destination).dimension;
+            for (size_t i = 0; i < min_dimension; i++) {
 
-                // resize and copy the keys for the destination
-                for (myBucket *temp = table[i]; temp != nullptr; temp = temp->next) {
-
-                    destination.add(temp->value);
-
-                }
+                // copy the keys to the destination
+                for (myHash_Open::myBucket *temp = this->table[i]; temp != nullptr; temp = temp->next) { (*destination).add(temp->value); }
 
             }
 
