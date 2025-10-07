@@ -1,0 +1,9 @@
+Package: myhash
+Version: 1.0
+Section: libs
+Priority: optional
+Architecture: all
+Maintainer: Lorenzo Di Napoli <lorenzo_dinapoli@icloud.com>
+Description: C++ Class myHash
+ Library which defines the class myHash (with all its derivated ones), used for working with Hash-Tables with Open/Close hashing rules.
+ 
