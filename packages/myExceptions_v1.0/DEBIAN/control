@@ -1,0 +1,9 @@
+Package: myexceptions
+Version: 1.0
+Section: libs
+Priority: optional
+Architecture: all
+Maintainer: Lorenzo Di Napoli <lorenzo_dinapoli@icloud.com>
+Description: C++ Class myExceptions
+ Library which defines the class myExceptions (with all its derivated ones), meant to be used as base for other libraries.
+ 
