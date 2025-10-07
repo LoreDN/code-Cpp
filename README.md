@@ -22,7 +22,7 @@ It can be done with the following **bash** commands:
 # change LIB / PACKAGE with the wanted ones (as myExceptions / myexceptions)
 
 # download the wanted package
-wget https://github.com/LoreDN/code-C/releases/download/LIB/PACKAGE.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/LIB/PACKAGE.deb
 
 # install the package
 sudo dpkg -i PACKAGE.deb
@@ -50,7 +50,7 @@ The core of all the libraries collected in this repository, used in order to man
 
 ```bash
 # latest
-wget https://github.com/LoreDN/code-C/releases/download/myExceptions/myexceptions.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions/myexceptions.deb
 sudo dpkg -i myexceptions.deb
 ```
 
@@ -59,6 +59,10 @@ A library wich allows to create and work with Hash-Tables, following the open/cl
 
 ```bash
 # latest
-wget https://github.com/LoreDN/code-C/releases/download/myHash/myhash.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/myHash/myhash.deb
 sudo dpkg -i myhash.deb
+
+# the only deependence is myexceptions_v1.0 or greater
+wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions/myexceptions.deb
+sudo dpkg -i myexceptions.deb
 ```
