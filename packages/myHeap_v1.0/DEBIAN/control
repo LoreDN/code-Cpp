@@ -1,0 +1,9 @@
+Package: myheap
+Version: 1.0
+Section: libs
+Priority: optional
+Architecture: all
+Maintainer: Lorenzo Di Napoli <lorenzo_dinapoli@icloud.com>
+Description: C++ Class myHeap
+ Library which defines the class myHeap (with all its derivated ones), used for working with Heaps treated as both Min-Heap and Max-Heap.
+ 
