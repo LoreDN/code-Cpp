@@ -19,10 +19,10 @@ In order to make as easy as possible to get and use the libraries, the only thin
 It can be done with the following **bash** commands:
 
 ```bash
-# change LIB / PACKAGE with the wanted ones (as myExceptions / myexceptions)
+# change LIB / VERSION / PACKAGE with the wanted ones (as myExceptions / v1.0 / myexceptions)
 
 # download the wanted package
-wget https://github.com/LoreDN/code-Cpp/releases/download/LIB/PACKAGE.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/LIB_VERSION/PACKAGE.deb
 
 # install the package
 sudo dpkg -i PACKAGE.deb
@@ -53,7 +53,7 @@ The core of all the libraries collected in this repository, used in order to man
 
 ```bash
 # latest v2.0
-wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions/myexceptions.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions_v2.0/myexceptions.deb
 sudo dpkg -i myexceptions.deb
 
 # update linker path
@@ -66,7 +66,7 @@ A library wich allows to create and work with Hash-Tables, following the open/cl
 
 ```bash
 # latest v1.0
-wget https://github.com/LoreDN/code-Cpp/releases/download/myHash/myhash.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/myHash_v1.0/myhash.deb
 sudo dpkg -i myhash.deb
 
 # update linker path
@@ -79,7 +79,7 @@ A library wich allows to create and work with Heaps, implementing both Min-Heap 
 
 ```bash
 # latest v1.0
-wget https://github.com/LoreDN/code-Cpp/releases/download/myHeap/myheap.deb
+wget https://github.com/LoreDN/code-Cpp/releases/download/myHeap_v1.0/myheap.deb
 sudo dpkg -i myheap.deb
 
 # update linker path
