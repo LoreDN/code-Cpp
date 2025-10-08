@@ -35,12 +35,25 @@ void myIndex_Exception::print() {
 // Test 1 --- Test myIndex_Exception
 void test_index(size_t index, size_t limit) {
 
-    // test the exception
-    if (index > limit) {
+    if (index > limit) { throw myIndex_Exception(index, "!!! Index Exception !!!"); }
+    return;
 
-        throw myIndex_Exception(index, "!!! Index Exception !!!");
+}
 
-    }
+
+/* ----------------------------------------------------------------------------- 2. myDataSize_Exception ---------------------------------------------------------------------------- */
+
+
+// constructor
+myDataSize_Exception::myDataSize_Exception(size_t sz, std::string msg) : myException(msg), size(sz) {}
+
+
+// Method --- Print the error message
+void myDataSize_Exception::print() {
+
+    // print the message
+    std::cout << std::endl << std::endl << this->message << std::endl;
+    std::cout << "The Data-Structure of size " << this->size << " will be resized!" << std::endl;
 
     // exit
     return;
@@ -48,7 +61,16 @@ void test_index(size_t index, size_t limit) {
 }
 
 
-/* ------------------------------------------------------------------------------- 2. myFile_Exception ------------------------------------------------------------------------------ */
+// Test 1 --- Test myDataSize_Exception
+void test_data_size(size_t size, size_t limit) {
+
+    if (size >= limit) { throw myDataSize_Exception(size, "!!! Data Size Exception !!!"); }
+    return;
+
+}
+
+
+/* ------------------------------------------------------------------------------- 3. myFile_Exception ------------------------------------------------------------------------------ */
 
 
 // constructor
@@ -71,14 +93,7 @@ void myFile_Exception::print() {
 // Test 2 --- 1 --- Test myFile_Exception with ifstream
 void test_infile(std::string path, std::ifstream *file) {
 
-    // test the exception
-    if (!(*file).is_open()) {
-
-        throw myFile_Exception(path, "!!! Reading File Exception !!!");
-
-    }
-
-    // exit
+    if (!(*file).is_open()) { throw myFile_Exception(path, "!!! Reading File Exception !!!"); }
     return;
 
 }
@@ -87,14 +102,7 @@ void test_infile(std::string path, std::ifstream *file) {
 // Test 2 --- 2 --- Test myFile_Exception with fstream
 void test_outfile(std::string path, std::ofstream *file) {
 
-    // test the exception
-    if (!(*file).is_open()) {
-
-        throw myFile_Exception(path, "!!! Writing File Exception !!!");
-
-    }
-
-    // exit
+    if (!(*file).is_open()) { throw myFile_Exception(path, "!!! Writing File Exception !!!"); }
     return;
 
 }
@@ -103,14 +111,7 @@ void test_outfile(std::string path, std::ofstream *file) {
 // Test 2 --- 3 --- Test myFile_Exception with fstream
 void test_iofile(std::string path, std::fstream *file) {
 
-    // test the exception
-    if (!(*file).is_open()) {
-
-        throw myFile_Exception(path, "!!! Reading / Writing File Exception !!!");
-
-    }
-
-    // exit
+    if (!(*file).is_open()) { throw myFile_Exception(path, "!!! Reading / Writing File Exception !!!"); }
     return;
 
 }

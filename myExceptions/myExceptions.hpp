@@ -62,7 +62,28 @@ class myIndex_Exception : public myException {
 
 void test_index(size_t index, size_t limit);
 
-/* ------------------------------------------------------------------------------- 2. myFile_Exception ------------------------------------------------------------------------------ */
+/* ----------------------------------------------------------------------------- 2. myDataSize_Exception ---------------------------------------------------------------------------- */
+
+class myDataSize_Exception : public myException {
+
+    private:
+
+        // attributes
+        size_t size;
+
+    public:
+
+        // constructor
+        myDataSize_Exception(size_t dim, std::string msg);
+
+        // methods prototypes
+        void print() override;
+
+};
+
+void test_data_size(size_t size, size_t limit);
+
+/* ------------------------------------------------------------------------------- 3. myFile_Exception ------------------------------------------------------------------------------ */
 
 class myFile_Exception : public myException {
 
