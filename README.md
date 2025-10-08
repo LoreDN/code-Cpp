@@ -27,7 +27,7 @@ wget https://github.com/LoreDN/code-Cpp/releases/download/LIB/PACKAGE.deb
 # install the package
 sudo dpkg -i PACKAGE.deb
 
-# add the "LDN" subfolder path (one time --- works for all libraries)
+# add the "LDN" subfolder path to the linker paths
 echo "/usr/lib/LDN" | sudo tee /etc/ld.so.conf.d/ldn.conf
 sudo ldconfig
 ```
@@ -35,8 +35,11 @@ sudo ldconfig
 Finally, in order to compile your program using the library, all you have left to do is to add this command to the compilation one:
 
 ```bash
+# -I/usr/include/LDN adds the /usr/include/LDN/ folder to the include paths (you can also #include <LDN/myLIB>)
+# -L/usr/lib/LDN adds the /usr/lib/LDN/ folder to the linking paths (in order to use the library -lLIB)
+
 # -lLIB indicates the library binary file, you have to change LIB with the wanted one (as myExceptions)
--L/usr/lib/LDN -lLIB
+g++ main.cpp -o program -I/usr/lib/LDN -L/usr/lib/LDN -lLIB
 ```
 
 <br>
@@ -49,20 +52,37 @@ Here is a list of the libraries wich can be found in the repo, everyone in their
 The core of all the libraries collected in this repository, used in order to managed custom Exceptions.
 
 ```bash
-# latest
+# latest v2.0
 wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions/myexceptions.deb
 sudo dpkg -i myexceptions.deb
+
+# update linker path
+echo "/usr/lib/LDN" | sudo tee /etc/ld.so.conf.d/ldn.conf
+sudo ldconfig
 ```
 
 ### 2. myHash
 A library wich allows to create and work with Hash-Tables, following the open/close hashing rules.
 
 ```bash
-# latest
+# latest v1.0
 wget https://github.com/LoreDN/code-Cpp/releases/download/myHash/myhash.deb
 sudo dpkg -i myhash.deb
 
-# the only deependence is myexceptions_v1.0 or greater
-wget https://github.com/LoreDN/code-Cpp/releases/download/myExceptions/myexceptions.deb
-sudo dpkg -i myexceptions.deb
+# update linker path
+echo "/usr/lib/LDN" | sudo tee /etc/ld.so.conf.d/ldn.conf
+sudo ldconfig
+```
+
+### 3. myHeap
+A library wich allows to create and work with Heaps, implementing both Min-Heap and Max-Heap.
+
+```bash
+# latest v1.0
+wget https://github.com/LoreDN/code-Cpp/releases/download/myHeap/myheap.deb
+sudo dpkg -i myheap.deb
+
+# update linker path
+echo "/usr/lib/LDN" | sudo tee /etc/ld.so.conf.d/ldn.conf
+sudo ldconfig
 ```
